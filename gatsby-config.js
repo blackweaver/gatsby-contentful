@@ -1,14 +1,20 @@
+const dotenv = require('dotenv');
+
+if (process.env.NODE_ENC !== 'production') {
+  dotenv.config();
+}
+
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Starter Blog`,
+    title: `Portfolio 2020`,
     author: {
-      name: `Kyle Mathews`,
-      summary: `who lives and works in San Francisco building useful things.`,
+      name: `Ricardo Castillo`,
+      summary: `Gatsby + Contentful.`,
     },
-    description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://gatsby-starter-blog-demo.netlify.com/`,
+    description: `Portafolio de trabajos.`,
+    siteUrl: `https://www.ricardocastillo.com/`,
     social: {
-      twitter: `kylemathews`,
+      twitter: `abcdisegno`,
     },
   },
   plugins: [
@@ -74,6 +80,14 @@ module.exports = {
       resolve: `gatsby-plugin-typography`,
       options: {
         pathToConfigModule: `src/utils/typography`,
+      },
+    },
+    `@contentful/gatsby-transformer-contentful-richtext`,
+    {
+      resolve: `gatsby-source-contentful`,
+      options: {
+        spaceId: `p1zrjq7oulxr`,
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

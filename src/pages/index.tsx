@@ -1,6 +1,8 @@
 // Gatsby supports TypeScript natively!
 import React from "react"
 import { PageProps, Link, graphql } from "gatsby"
+import Img from "gatsby-image"
+import styled from "styled-components"
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
@@ -13,54 +15,66 @@ type Data = {
       title: string
     }
   }
-  allMarkdownRemark: {
+  allContentfulWork: {
     edges: {
       node: {
         excerpt: string
-        frontmatter: {
-          title: string
-          date: string
-          description: string
-        }
-        fields: {
-          slug: string
-        }
+        slug: string
+        title: string
+        subtitle: string
+        image: any
       }
     }[]
   }
 }
 
+const Post = styled.div`
+  display: flex;
+`
+
+const PostImage = styled.div`
+  flex: 25%;
+  margin-right: 1rem;
+`
+
+const PostText = styled.div`
+  flex: 75%;
+`
+
 const BlogIndex = ({ data, location }: PageProps<Data>) => {
   const siteTitle = data.site.siteMetadata.title
-  const posts = data.allMarkdownRemark.edges
+  const posts = data.allContentfulWork.edges
 
   return (
     <Layout location={location} title={siteTitle}>
       <SEO title="All posts" />
       <Bio />
       {posts.map(({ node }) => {
-        const title = node.frontmatter.title || node.fields.slug
+        const title = node.title || node.slug
         return (
-          <article key={node.fields.slug}>
+          <article key={ node.slug }>
             <header>
-              <h3
-                style={{
-                  marginBottom: rhythm(1 / 4),
-                }}
-              >
-                <Link style={{ boxShadow: `none` }} to={node.fields.slug}>
-                  {title}
-                </Link>
-              </h3>
-              <small>{node.frontmatter.date}</small>
+              <Post>
+              
+                <PostImage>
+                  <Img fluid={ node.image.fluid } />
+                </PostImage>
+                <PostText>
+                  <h3
+                    style={{
+                      marginTop: 0,
+                      marginBottom: rhythm(1 / 4),
+                    }}
+                  >
+                    <Link style={{ boxShadow: `none` }} to={ node.slug }>
+                      {title}
+                    </Link>
+                  </h3>
+                  <p>{ node.subtitle }</p>
+                </PostText>
+                
+              </Post>
             </header>
-            <section>
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: node.frontmatter.description || node.excerpt,
-                }}
-              />
-            </section>
           </article>
         )
       })}
@@ -77,17 +91,22 @@ export const pageQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+    allContentfulWork {
       edges {
         node {
-          excerpt
-          fields {
-            slug
+          title
+          subtitle
+          author
+          slug
+          image {
+            fluid {
+              ...GatsbyContentfulFluid
+            }
           }
-          frontmatter {
-            date(formatString: "MMMM DD, YYYY")
-            title
-            description
+          content {
+            childContentfulRichText {
+              html
+            }
           }
         }
       }
